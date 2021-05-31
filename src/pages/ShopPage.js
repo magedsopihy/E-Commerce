@@ -16,7 +16,7 @@ const ShopPage = () => {
         setProducts(data)
       }
     })
-  }, [shopId])
+  }, [shopId, fechProductsByShop])
 
   console.log(products)
   return (

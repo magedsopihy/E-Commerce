@@ -14,18 +14,15 @@ const ProfilePage = () => {
   const [user, setUser] = useState({})
   const [setRedirectToSignin] = useState(false)
 
-  const readUserInfo = async () => {
-    const response = await readUserProfile(userId)
-
-    if (response.error) {
-      setRedirectToSignin(true)
-    } else {
-      setUser(response)
-    }
-  }
   useEffect(() => {
-    readUserInfo()
-  }, [])
+    readUserProfile(userId).then((response) => {
+      if (response.error) {
+        setRedirectToSignin(true)
+      } else {
+        setUser(response)
+      }
+    })
+  }, [readUserProfile, setRedirectToSignin, userId])
 
   return (
     <Wrapper className='page-100'>
@@ -47,7 +44,7 @@ const ProfilePage = () => {
                   'https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_JYpQqNvaly7fDPjmLrOC5HXenVCnADmh&scope=read_write'
                 }
               >
-                <img src={stripeButton} />
+                <img src={stripeButton} alt='connect to stripe ' />
               </a>
             ))}
           <Link className='edit' to={`/user/edit/${userId}`}>

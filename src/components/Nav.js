@@ -6,7 +6,6 @@ import { links } from './../utils/constants'
 import logo from './../assets/logo.svg'
 import CartButtons from './CartButtons'
 import { useProductsContext } from './../context/products-context'
-import { useUserContext } from './../context/user-context'
 
 const Nav = () => {
   const { openSidebar } = useProductsContext()

@@ -1,8 +1,8 @@
-import React, { useContext, useReducer, useEffect } from 'react'
+import React, { useContext, useReducer } from 'react'
 import axios from 'axios'
 import reducer from './../reducers/shop-reducer'
 import { useUserContext } from './user-context'
-import { shop_url as url } from './../utils/constants'
+
 import {
   LIST_SHOPS_BY_OWNER_SUCCESS,
   LIST_SHOPS_BY_OWNER_ERROR,

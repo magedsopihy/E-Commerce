@@ -12,7 +12,7 @@ const PerviewImages = ({ images }) => {
   }, [images])
   return (
     <Wrapper>
-      <img src={mainImage} alt='frist image' className='main' />
+      <img src={mainImage} alt='frist one in' className='main' />
       <section className='gallery'>
         {images.map((image, index) => {
           return (

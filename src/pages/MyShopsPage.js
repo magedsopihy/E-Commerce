@@ -5,13 +5,13 @@ import { GoDiffAdded } from 'react-icons/go'
 import { MdModeEdit } from 'react-icons/md'
 import { useShopContext } from './../context/shop-context'
 import { DeleteShop } from './../components'
-import logo from './../assets/no_logo.png'
+
 const MyShopsPage = () => {
   const { listShopsByOwner, myShops } = useShopContext()
 
   useEffect(() => {
     listShopsByOwner()
-  }, [])
+  }, [listShopsByOwner])
 
   return (
     <Wrapper className='page-100'>

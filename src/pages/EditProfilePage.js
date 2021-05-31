@@ -19,24 +19,21 @@ const EditProfilePage = () => {
     password: '',
   })
 
-  const readUserInfo = async () => {
-    const response = await readUserProfile(userId)
-    console.log(response)
-    if (response.error) {
-      setValues({ ...values, error: response.error })
-    } else {
-      setValues({
-        ...values,
-        fName: response.fName,
-        lName: response.lName,
-        email: response.email,
-        seller: response.seller,
-      })
-    }
-  }
   useEffect(() => {
-    readUserInfo()
-  }, [])
+    readUserProfile(userId).then((response) => {
+      if (response.error) {
+        setValues({ ...values, error: response.error })
+      } else {
+        setValues({
+          ...values,
+          fName: response.fName,
+          lName: response.lName,
+          email: response.email,
+          seller: response.seller,
+        })
+      }
+    })
+  }, [readUserProfile, userId, values])
 
   const handleChange = (name) => (event) => {
     if (name === 'seller') {

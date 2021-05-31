@@ -22,13 +22,13 @@ const products_reducer = (state, action) => {
     return { ...state, isSidebarOpen: false }
   }
 
-  if (action.type == GET_PRODUCTS_BEGIN) {
+  if (action.type === GET_PRODUCTS_BEGIN) {
     return { ...state, productsLoading: true }
   }
 
-  if (action.type == GET_PRODUCTS_SUCCESS) {
+  if (action.type === GET_PRODUCTS_SUCCESS) {
     const featuredProducts = action.payload.filter(
-      (product) => product.featured == true
+      (product) => product.featured === true
     )
     return {
       ...state,
@@ -38,7 +38,7 @@ const products_reducer = (state, action) => {
     }
   }
 
-  if (action.type == GET_PRODUCTS_ERROR) {
+  if (action.type === GET_PRODUCTS_ERROR) {
     return {
       ...state,
       productsError: true,
@@ -46,11 +46,11 @@ const products_reducer = (state, action) => {
     }
   }
 
-  if (action.type == GET_SINGLE_PRODUCT_BEGIN) {
+  if (action.type === GET_SINGLE_PRODUCT_BEGIN) {
     return { ...state, singleProductLoading: true, singleProductError: false }
   }
 
-  if (action.type == GET_SINGLE_PRODUCT_SUCCESS) {
+  if (action.type === GET_SINGLE_PRODUCT_SUCCESS) {
     return {
       ...state,
       singleProductLoading: false,
@@ -59,18 +59,18 @@ const products_reducer = (state, action) => {
     }
   }
 
-  if (action.type == GET_SINGLE_PRODUCT_ERROR) {
+  if (action.type === GET_SINGLE_PRODUCT_ERROR) {
     return { ...state, singleProductLoading: false, singleProductError: true }
   }
 
-  if (action.type == LIST_PRODUCTS_BY_SHOP_SUCCESS) {
+  if (action.type === LIST_PRODUCTS_BY_SHOP_SUCCESS) {
     return {
       ...state,
       productsByShop: action.payload,
     }
   }
 
-  if (action.type == LIST_PRODUCTS_BY_SHOP_ERROR) {
+  if (action.type === LIST_PRODUCTS_BY_SHOP_ERROR) {
     return {
       ...state,
       productsByShopError: true,

@@ -35,7 +35,7 @@ const EdtiShop = ({ shopId }) => {
       }
     })
     //
-  }, [shopId])
+  }, [shopId, readShop, values])
 
   const handleChange = (name) => (event) => {
     if (name === 'image') {

@@ -1,4 +1,4 @@
-import React, { useContext, useReducer, useEffect, useMemo } from 'react'
+import React, { useContext, useReducer, useMemo } from 'react'
 import axios from 'axios'
 import reducer from './../reducers/user-reducer'
 
@@ -37,7 +37,7 @@ export const UserProvider = ({ children }) => {
 
   useMemo(() => {
     dispatch({ type: SET_USER })
-  }, [state.isAuthenticated])
+  }, [])
 
   //track user inputs
   const login = async (user) => {

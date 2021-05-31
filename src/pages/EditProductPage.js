@@ -46,7 +46,7 @@ const EditProductPage = () => {
         })
       }
     })
-  }, [productId])
+  }, [productId, fetchProduct, values])
 
   const handleChange = (name) => (event) => {
     if (name === 'image') {

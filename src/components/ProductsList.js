@@ -1,5 +1,5 @@
 import React from 'react'
-import styled from 'styled-components'
+
 import GridView from './GridView'
 import Listview from './Listview'
 import { useFilterContext } from './../context/filter-context'

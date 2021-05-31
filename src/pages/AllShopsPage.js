@@ -9,18 +9,16 @@ const AllShopsPage = () => {
     error: '',
     shops: [],
   })
-  const list = async () => {
-    const response = await listAllShops()
-    console.log(response)
-    if (response.error) {
-      setValues({ ...values, error: response.error })
-    } else {
-      setValues({ ...values, shops: response })
-    }
-  }
+
   useEffect(() => {
-    list()
-  }, [])
+    listAllShops().then((response) => {
+      if (response.error) {
+        setValues({ ...values, error: response.error })
+      } else {
+        setValues({ ...values, shops: response })
+      }
+    })
+  }, [listAllShops, values])
 
   return (
     <Wrapper className='page-100'>
