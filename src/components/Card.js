@@ -13,19 +13,20 @@ const Card = ({ id }) => {
     error: '',
   })
 
-  useEffect(async () => {
-    try {
-      const shop = await readShop(id)
-      setValues({
-        ...values,
-        id: shop._id,
-        name: shop.name,
-        image: shop.image.url,
-        description: shop.description,
-      })
-    } catch (err) {
-      setValues({ ...values, error: err })
-    }
+  useEffect(() => {
+    readShop(id).then((shop) => {
+      if (shop.error) {
+        setValues({ ...values, error: shop.error })
+      } else {
+        setValues({
+          ...values,
+          id: shop._id,
+          name: shop.name,
+          image: shop.image.url,
+          description: shop.description,
+        })
+      }
+    })
   }, [id])
 
   const logoUrl = values.image ? values.image : logo
