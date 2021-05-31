@@ -10,6 +10,7 @@ import { useUserContext } from './../context/user-context'
 
 const Nav = () => {
   const { openSidebar } = useProductsContext()
+
   return (
     <NavContainer>
       <section className='nav-center'>

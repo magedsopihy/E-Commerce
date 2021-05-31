@@ -17,13 +17,13 @@ const intialState = {
 const ShopContext = React.createContext()
 
 export const ShopProvider = ({ children }) => {
-  const { user } = useUserContext()
+  const { token, authorizedId } = useUserContext()
   const [state, dispatch] = useReducer(reducer, intialState)
 
   //base axios
   const authAxios = axios.create({
-    baseURL: 'http://localhost:3001/api',
-    headers: { Authorization: `Bearer ${user.token}` },
+    baseURL: process.env.REACT_APP_API_URL + '/api',
+    headers: { Authorization: `Bearer ${token}` },
   })
 
   const createShop = async ({ name, description, image }) => {
@@ -35,9 +35,9 @@ export const ShopProvider = ({ children }) => {
     try {
       const response = await axios({
         method: 'post',
-        url: `http://localhost:3001/api/shops/by/${user.user._id}`,
+        url: process.env.REACT_APP_API_URL + `/api/shops/by/${authorizedId}`,
         data: shopData,
-        headers: { Authorization: `Bearer ${user.token}` },
+        headers: { Authorization: `Bearer ${token}` },
       })
       return response.data
     } catch (err) {
@@ -47,7 +47,7 @@ export const ShopProvider = ({ children }) => {
 
   const listShopsByOwner = async () => {
     try {
-      const response = await authAxios.get(`/shops/by/${user.user._id}`)
+      const response = await authAxios.get(`/shops/by/${authorizedId}`)
       dispatch({ type: LIST_SHOPS_BY_OWNER_SUCCESS, payload: response.data })
     } catch (err) {
       dispatch({ type: LIST_SHOPS_BY_OWNER_ERROR, payload: err.response.data })
@@ -82,9 +82,9 @@ export const ShopProvider = ({ children }) => {
     try {
       const response = await axios({
         method: 'put',
-        url: `http://localhost:3001/api/shops/${id}`,
+        url: process.env.REACT_APP_API_URL + `/api/shops/${id}`,
         data: shopData,
-        headers: { Authorization: `Bearer ${user.token}` },
+        headers: { Authorization: `Bearer ${token}` },
       })
 
       return response.data
@@ -95,7 +95,9 @@ export const ShopProvider = ({ children }) => {
 
   const listAllShops = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/api/shops')
+      const response = await axios.get(
+        process.env.REACT_APP_API_URL + '/api/shops'
+      )
       return response.data
     } catch (err) {
       return err.response.data

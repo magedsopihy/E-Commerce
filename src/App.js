@@ -1,12 +1,13 @@
 import React from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+
 import { Nav, Sidebar, Footer } from './components'
 import {
   Home,
   Products,
   SingleProduct,
   Error,
-  About,
+  Profile,
   Chectout,
   Cart,
   Login,
@@ -15,9 +16,12 @@ import {
   MyShops,
   PrivateRoute,
   EditShop,
+  EditProduct,
   AllShops,
   Shop,
   NewProduct,
+  EditProfile,
+  StripeConnect,
 } from './pages'
 
 function App() {
@@ -50,13 +54,16 @@ function App() {
         <Route exact path='/shops/:shopId'>
           <Shop />
         </Route>
+        <Route path='/seller/stripe/connect' component={StripeConnect} />
 
         <PrivateRoute path='/seller/shops' component={MyShops} />
+        <PrivateRoute path='/user/edit/:userId' component={EditProfile} />
+        <PrivateRoute path='/user/:userId' component={Profile} />
         <PrivateRoute path='/seller/shop/edit/:shopId' component={EditShop} />
-        {/* <PrivateRoute
+        <PrivateRoute
           path='/seller/:shopId/:productId/edit'
           component={EditProduct}
-        /> */}
+        />
         <PrivateRoute
           path='/seller/:shopId/products/new'
           component={NewProduct}

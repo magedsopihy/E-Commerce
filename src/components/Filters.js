@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { FaCheck } from 'react-icons/fa'
 import { useFilterContext } from './../context/filter-context'
-import { formatPrice, getUniqueValues } from './../utils/helpers'
+import { formatPrice } from './../utils/helpers'
 const Filters = () => {
   const {
     filters: {
@@ -18,11 +18,11 @@ const Filters = () => {
     clearFilters,
     updateFilters,
     allProducts,
+    colors,
+    categories,
+    companies,
   } = useFilterContext()
-
-  const categories = getUniqueValues(allProducts, 'category')
-  const companies = getUniqueValues(allProducts, 'company')
-  const colors = getUniqueValues(allProducts, 'colors')
+  console.log(colors)
 
   return (
     <Wrapper>

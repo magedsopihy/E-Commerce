@@ -1,16 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-
 import { Redirect } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
 import { FiCamera } from 'react-icons/fi'
-import { PerviewImages } from './../components'
-import { useProductsContext } from './../context/products-context'
+import { PerviewImages } from '../components'
+import { useProductsContext } from '../context/products-context'
 import { colourNameToHex } from './../utils/helpers'
 
-const NewProduct = () => {
-  const { addProduct } = useProductsContext()
-  const { shopId } = useParams()
+const EditProductPage = () => {
+  const { fetchProduct, updateProduct } = useProductsContext()
+  const { shopId, productId } = useParams()
   const [values, setValues] = useState({
     imagesToPerview: [],
     images: [],
@@ -27,15 +26,38 @@ const NewProduct = () => {
     colors: [],
   })
 
+  useEffect(() => {
+    fetchProduct(productId).then((product) => {
+      if (product.error) {
+        setValues({ ...values, error: product.error })
+      } else {
+        setValues({
+          ...values,
+          imagesToPerview: [],
+          images: product.images,
+          name: product.name,
+          description: product.description,
+          category: product.category,
+          quantity: product.quantity,
+          price: product.price,
+          shipping: product.shipping,
+          company: product.company,
+          colors: product.colors,
+        })
+      }
+    })
+  }, [productId])
+
   const handleChange = (name) => (event) => {
     if (name === 'image') {
       if (event.target.files) {
         const imagesArray = Array.from(event.target.files).map((file) =>
           URL.createObjectURL(file)
         )
+
         setValues({
           ...values,
-          imagesToPerview: imagesArray,
+          imagesToPerview: [...values.imagesToPerview, imagesArray],
           images: event.target.files,
         })
       }
@@ -67,7 +89,7 @@ const NewProduct = () => {
     if (
       values.colors.length > 0 &&
       event.keyCode === 8 &&
-      values.color.length === 0
+      values.color === ''
     ) {
       values.colors.pop()
       setValues({ ...values, colors: values.colors })
@@ -75,7 +97,7 @@ const NewProduct = () => {
   }
 
   const handleSubmit = async () => {
-    const response = await addProduct(shopId, values)
+    const response = await updateProduct(shopId, productId, values)
     if (response.error) {
       setValues({ ...values, error: response.error })
     } else {
@@ -90,7 +112,13 @@ const NewProduct = () => {
   return (
     <Wrapper className='page-100 section-center'>
       {values.images.length > 0 ? (
-        <PerviewImages images={values.imagesToPerview} />
+        <PerviewImages
+          images={
+            values.imagesToPerview.length > 0
+              ? values.imagesToPerview
+              : values.images
+          }
+        />
       ) : (
         <section className='perview'>
           <h3>No Images slected yet</h3>
@@ -166,7 +194,7 @@ const NewProduct = () => {
           <label for='favcolor'>
             colors:
             <div className='colors'>
-              {values.colors.length > 0 &&
+              {values.colors &&
                 values.colors.map((color, i) => {
                   return (
                     <span
@@ -208,10 +236,10 @@ const NewProduct = () => {
               multiple
               onChange={handleChange('image')}
             />
-            <FiCamera /> add product images
+            <FiCamera /> edit product images
           </label>
           <button type='submit' className='btn' onClick={handleSubmit}>
-            add product
+            edit product
           </button>
         </div>
       </form>
@@ -227,21 +255,18 @@ const Wrapper = styled.main`
     display: grid;
     place-items: center;
   }
-  .shipping {
-    display: grid;
-    text-align: 'center';
-    align-items: center;
-    grid-template-columns: auto 1fr;
-
-    margin-bottom: 2rem;
-    gap: 1rem;
-  }
   .colors {
     display: inline-block;
     text-align: 'center';
   }
   #favcolor {
     border: transparent;
+  }
+  .form-control {
+    display: flex;
+    flex-direction: column;
+    min-width: 350px;
+    margin: 0.5rem 0;
   }
   .form-control {
     display: flex;
@@ -303,4 +328,4 @@ const Wrapper = styled.main`
     margin-bottom: 2rem;
   }
 `
-export default NewProduct
+export default EditProductPage

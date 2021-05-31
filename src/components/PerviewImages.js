@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 
-const ProductImages = ({ images }) => {
-  const [mainImage, setMainImage] = useState(images[0])
+const PerviewImages = ({ images }) => {
+  const [mainImage, setMainImage] = useState([])
   useEffect(() => {
-    setMainImage(images[0])
+    if (images[0].url) {
+      setMainImage(images[0].url)
+    } else {
+      setMainImage(images[0])
+    }
   }, [images])
   return (
     <Wrapper>
@@ -13,7 +17,7 @@ const ProductImages = ({ images }) => {
         {images.map((image, index) => {
           return (
             <img
-              src={image}
+              src={image.url ? image.url : image}
               alt={image}
               key={index}
               onClick={() => setMainImage(images[index])}
@@ -70,4 +74,4 @@ const Wrapper = styled.section`
     }
   }
 `
-export default ProductImages
+export default PerviewImages

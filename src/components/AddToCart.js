@@ -7,7 +7,7 @@ import { useCartContext } from './../context/cart-context'
 const AddToCart = ({ product }) => {
   const { id, colors, stock } = product
   const { addToCart } = useCartContext()
-  const [mainColor, setMainColor] = useState(colors[0])
+  const [mainColor, setMainColor] = useState(colors[0].color)
   const [amount, setAmount] = useState(1)
 
   const increase = () => {
@@ -34,13 +34,13 @@ const AddToCart = ({ product }) => {
             return (
               <button
                 key={index}
-                style={{ background: color }}
+                style={{ background: color.color }}
                 className={`${
-                  mainColor === color ? 'color-btn active' : 'color-btn'
+                  mainColor === color.color ? 'color-btn active' : 'color-btn'
                 }`}
-                onClick={() => setMainColor(colors[index])}
+                onClick={() => setMainColor(colors[index].color)}
               >
-                {mainColor === color ? <FaCheck /> : null}
+                {mainColor === color.color ? <FaCheck /> : null}
               </button>
             )
           })}

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import { GoDiffAdded } from 'react-icons/go'
@@ -7,10 +7,15 @@ import DeleteProduct from './DeleteProduct'
 import { useProductsContext } from './../context/products-context'
 
 const EditProducts = ({ shopId }) => {
-  const { fechProductsByShop, productsByShop } = useProductsContext()
-
+  const { fechProductsByShop } = useProductsContext()
+  const [products, setProducts] = useState([])
   useEffect(() => {
-    fechProductsByShop(shopId)
+    fechProductsByShop(shopId).then((data) => {
+      if (data.error) {
+      } else {
+        setProducts(data)
+      }
+    })
   }, [shopId])
 
   return (
@@ -23,8 +28,8 @@ const EditProducts = ({ shopId }) => {
         </Link>
       </section>
       <section>
-        {productsByShop.length > 0 &&
-          productsByShop.map((product, i) => {
+        {products.length > 0 &&
+          products.map((product, i) => {
             console.log(product)
             return (
               <>
@@ -39,7 +44,10 @@ const EditProducts = ({ shopId }) => {
                       Quantity: {product.quantity} | Price: ${product.price}
                     </p>
                   </div>
-                  <Link className='edit'>
+                  <Link
+                    className='edit'
+                    to={`/seller/${product.shop._id}/${product._id}/edit`}
+                  >
                     <MdModeEdit />
                   </Link>
                   <DeleteProduct key={product._id} product={product} />

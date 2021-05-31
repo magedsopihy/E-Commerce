@@ -1,4 +1,5 @@
 import React, { useContext, useReducer, useEffect } from 'react'
+import axios from 'axios'
 import { useProductsContext } from './products-context'
 import reducer from './../reducers/filter-reducer'
 import {
@@ -10,11 +11,20 @@ import {
   UPDATE_FILTERS,
   CLEAR_FILTERS,
   FILTER_PRODUCTS,
+  GET_CATEGORIES_SUCCESS,
+  GET_CATEGORIES_ERROR,
+  GET_COLORS_SUCCESS,
+  GET_COLORS_ERROR,
+  GET_COMPANIES_SUCCESS,
+  GET_COMPANIES_ERROR,
 } from './../actions'
 
 const intialState = {
   filteredProducts: [],
   allProducts: [],
+  categories: [],
+  colors: [],
+  companies: [],
   gridView: true,
   sort: 'price-lowest',
   filters: {
@@ -31,16 +41,19 @@ const intialState = {
 const FilterContext = React.createContext()
 
 export const FilterProvider = ({ children }) => {
-  const { products, productsByShop } = useProductsContext()
+  const { products, fetchProducts } = useProductsContext()
   const [state, dispatch] = useReducer(reducer, intialState)
 
   useEffect(() => {
     dispatch({ type: LOAD_PRODUCTS, payload: products })
+    getCategories()
+    getColors()
+    getCompanies()
   }, [products])
 
   useEffect(() => {
     dispatch({ type: SORT_PRODUCTS })
-    dispatch({ type: FILTER_PRODUCTS })
+    // dispatch({ type: FILTER_PRODUCTS })
   }, [products, state.sort, state.filters])
 
   const setGirdView = () => {
@@ -56,9 +69,10 @@ export const FilterProvider = ({ children }) => {
   }
 
   //filters
-  const updateFilters = (e) => {
+  const updateFilters = async (e) => {
     const name = e.target.name
     let value = e.target.value
+
     if (name === 'category') {
       value = e.target.textContent
     }
@@ -72,12 +86,49 @@ export const FilterProvider = ({ children }) => {
       value = e.target.checked
     }
     dispatch({ type: UPDATE_FILTERS, payload: { name, value } })
+    fetchProducts(name, value)
   }
 
   const clearFilters = () => {
     dispatch({ type: CLEAR_FILTERS })
   }
 
+  const getCategories = async () => {
+    try {
+      const res = await axios.get(
+        process.env.REACT_APP_API_URL + `/api/products/categories`
+      )
+      console.log(res)
+      dispatch({ type: GET_CATEGORIES_SUCCESS, payload: res.data })
+    } catch (err) {
+      console.log(err)
+      dispatch({ type: GET_CATEGORIES_ERROR, payload: err.res.data })
+    }
+  }
+
+  const getColors = async () => {
+    try {
+      const res = await axios.get(
+        process.env.REACT_APP_API_URL + `/api/products/colors`
+      )
+      dispatch({ type: GET_COLORS_SUCCESS, payload: res.data })
+    } catch (err) {
+      console.log(err)
+      dispatch({ type: GET_COLORS_ERROR, payload: err.res.data })
+    }
+  }
+
+  const getCompanies = async () => {
+    try {
+      const res = await axios.get(
+        process.env.REACT_APP_API_URL + `/api/products/company`
+      )
+      dispatch({ type: GET_COMPANIES_SUCCESS, payload: res.data })
+    } catch (err) {
+      console.log(err)
+      dispatch({ type: GET_COMPANIES_ERROR, payload: err.res.data })
+    }
+  }
   return (
     <FilterContext.Provider
       value={{

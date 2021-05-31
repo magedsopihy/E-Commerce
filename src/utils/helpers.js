@@ -1,3 +1,4 @@
+import { colours } from './constants'
 export const formatPrice = (number) => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -11,4 +12,11 @@ export const getUniqueValues = (data, type) => {
     unique = unique.flat()
   }
   return ['all', ...new Set(unique)]
+}
+
+export const colourNameToHex = (colour) => {
+  if (typeof colours[colour.toLowerCase()] != 'undefined')
+    return colours[colour.toLowerCase()]
+
+  return false
 }

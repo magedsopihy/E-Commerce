@@ -4,7 +4,6 @@ import GridView from './GridView'
 import Listview from './Listview'
 import { useFilterContext } from './../context/filter-context'
 const ProductsList = ({ shopProducts }) => {
-  console.log(shopProducts)
   const { filteredProducts, gridView } = useFilterContext()
 
   if (filteredProducts.length < 1) {

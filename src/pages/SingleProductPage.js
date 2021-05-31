@@ -48,10 +48,10 @@ const SingleProductPage = () => {
     name,
     price,
     description,
-    stock,
+    quantity,
     stars,
     reviews,
-    id: sku,
+    _id: sku,
     company,
     images,
   } = singleProduct
@@ -74,7 +74,7 @@ const SingleProductPage = () => {
 
             <p className='info'>
               <span>Available : </span>
-              {stock > 0 ? 'In stock' : 'out of stock'}
+              {quantity > 0 ? 'In stock' : 'out of stock'}
             </p>
             <p className='info'>
               <span>SKU : </span>
@@ -85,7 +85,7 @@ const SingleProductPage = () => {
               {company}
             </p>
             <hr />
-            {stock > 0 && <AddToCart product={singleProduct} />}
+            {quantity > 0 && <AddToCart product={singleProduct} />}
           </section>
         </section>
       </section>

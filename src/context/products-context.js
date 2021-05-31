@@ -1,8 +1,6 @@
 import React, { useContext, useReducer, useEffect } from 'react'
 import axios from 'axios'
 import reducer from './../reducers/products-reducer'
-
-import { products_url as url } from './../utils/constants'
 import { useUserContext } from './user-context'
 import {
   SIDEBAR_OPEN,
@@ -13,8 +11,6 @@ import {
   GET_SINGLE_PRODUCT_BEGIN,
   GET_SINGLE_PRODUCT_SUCCESS,
   GET_SINGLE_PRODUCT_ERROR,
-  LIST_PRODUCTS_BY_SHOP_SUCCESS,
-  LIST_PRODUCTS_BY_SHOP_ERROR,
   DELETE_PORODUCT_SUCCESS,
   DELETE_PORODUCT_ERROR,
 } from './../actions'
@@ -34,11 +30,11 @@ const intialState = {
 const ProductsContext = React.createContext()
 export const ProductsProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, intialState)
-  const { user } = useUserContext()
+  const { token } = useUserContext()
   //sidebar
   const authAxios = axios.create({
-    baseURL: 'http://localhost:3001/api',
-    headers: { Authorization: `Bearer ${user.token}` },
+    baseURL: process.env.REACT_APP_API_URL + '/api',
+    headers: { Authorization: `Bearer ${token}` },
   })
 
   const openSidebar = () => {
@@ -49,10 +45,15 @@ export const ProductsProvider = ({ children }) => {
     dispatch({ type: SIDEBAR_CLOSE })
   }
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (name = '', value = '') => {
     dispatch({ type: GET_PRODUCTS_BEGIN })
     try {
-      const response = await axios.get(url)
+      const response = await axios.get(
+        process.env.REACT_APP_API_URL + '/api/products',
+        {
+          params: { [name]: value },
+        }
+      )
       const products = response.data
       dispatch({ type: GET_PRODUCTS_SUCCESS, payload: products })
     } catch (err) {
@@ -72,17 +73,30 @@ export const ProductsProvider = ({ children }) => {
   }
 
   const addProduct = async (shopId, values) => {
-    const { images, name, description, category, quantity, price } = values
+    const {
+      images,
+      name,
+      description,
+      category,
+      quantity,
+      price,
+      colors,
+      shipping,
+      company,
+    } = values
+
     let shopData = new FormData()
     name && shopData.append('name', name)
     description && shopData.append('description', description)
     category && shopData.append('category', category)
     quantity && shopData.append('quantity', quantity)
     price && shopData.append('price', price)
-    console.log(images)
+    colors && shopData.append('colors', JSON.stringify(colors))
+    shipping && shopData.append('shipping', shipping)
+    company && shopData.append('company', company)
+
     if (images) {
       for (let i = 0; i < images.length; i++) {
-        // shopData.append(images[i].name, images[i])
         shopData.append('image', images[i])
       }
     }
@@ -90,9 +104,9 @@ export const ProductsProvider = ({ children }) => {
     try {
       const response = await axios({
         method: 'post',
-        url: `http://localhost:3001/api/products/by/${shopId}`,
+        url: process.env.REACT_APP_API_URL + `/api/products/by/${shopId}`,
         data: shopData,
-        headers: { Authorization: `Bearer ${user.token}` },
+        headers: { Authorization: `Bearer ${token}` },
       })
       return response.data
     } catch (err) {
@@ -100,17 +114,14 @@ export const ProductsProvider = ({ children }) => {
     }
   }
 
-  const fechProductsByShop = async (id) => {
+  const fechProductsByShop = async (id, name = '', value = '') => {
     try {
-      const response = await authAxios.get(`/products/by/${id}`)
-      // dispatch({ type: LIST_PRODUCTS_BY_SHOP_SUCCESS, payload: response.data })
+      const response = await authAxios.get(`/products/by/${id}`, {
+        params: { [name]: value },
+      })
       return response.data
     } catch (err) {
-      // dispatch({
-      //   type: LIST_PRODUCTS_BY_SHOP_ERROR,
-      //   payload: err.response.data,
-      // })
-      // return err.response.data
+      return err.response.data
     }
   }
 
@@ -124,6 +135,61 @@ export const ProductsProvider = ({ children }) => {
       dispatch({ type: DELETE_PORODUCT_ERROR, payload: err.response.data })
     }
   }
+
+  const fetchProduct = async (id) => {
+    try {
+      const product = await axios.get(
+        process.env.REACT_APP_API_URL + `/api/products/${id}`
+      )
+      return product.data
+    } catch (err) {
+      return err.product.data
+    }
+  }
+
+  const updateProduct = async (shopId, productId, values) => {
+    const {
+      imagesToPerview,
+      name,
+      description,
+      images,
+      category,
+      quantity,
+      price,
+    } = values
+
+    let prodcutData = new FormData()
+    name && prodcutData.append('name', name)
+    description && prodcutData.append('description', description)
+    category && prodcutData.append('category', category)
+    quantity && prodcutData.append('quantity', quantity)
+    price && prodcutData.append('price', price)
+
+    if (imagesToPerview.length > 0) {
+      if (images.length > 0) {
+        for (let i = 0; i < images.length; i++) {
+          prodcutData.append('image', images[i])
+        }
+      }
+    }
+    for (var value of prodcutData.values()) {
+      console.log(value)
+    }
+    try {
+      const response = await axios({
+        method: 'put',
+        url:
+          process.env.REACT_APP_API_URL + `/api/product/${shopId}/${productId}`,
+        data: prodcutData,
+        headers: { Authorization: `Bearer ${token}` },
+      })
+
+      return response.data
+    } catch (err) {
+      return err.response.data
+    }
+  }
+
   useEffect(() => {
     fetchProducts()
   }, [])
@@ -138,6 +204,9 @@ export const ProductsProvider = ({ children }) => {
         addProduct,
         fechProductsByShop,
         deleteProduct,
+        fetchProduct,
+        updateProduct,
+        fetchProducts,
       }}
     >
       {children}

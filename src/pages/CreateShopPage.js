@@ -5,9 +5,9 @@ import { CreateShop } from './../components'
 import { useUserContext } from './../context/user-context'
 
 const CreateShopPage = () => {
-  const { user } = useUserContext()
-  console.log(user)
-  if (user) {
+  const { isAuthenticated } = useUserContext()
+
+  if (isAuthenticated) {
     return <CreateShop />
   }
 

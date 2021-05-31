@@ -20,8 +20,10 @@ const ShopPage = () => {
 
   console.log(products)
   return (
-    <Wrapper className='section-center'>
-      <Card id={shopId} />
+    <Wrapper className='page-100 section-center'>
+      <div>
+        <Card id={shopId} />
+      </div>
       <ProductsList shopProducts={products} />
     </Wrapper>
   )

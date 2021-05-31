@@ -6,7 +6,12 @@ import {
   SORT_PRODUCTS,
   UPDATE_FILTERS,
   CLEAR_FILTERS,
-  FILTER_PRODUCTS,
+  GET_CATEGORIES_SUCCESS,
+  GET_CATEGORIES_ERROR,
+  GET_COLORS_SUCCESS,
+  GET_COLORS_ERROR,
+  GET_COMPANIES_SUCCESS,
+  GET_COMPANIES_ERROR,
 } from './../actions'
 
 const filter_reducer = (state, action) => {
@@ -71,49 +76,6 @@ const filter_reducer = (state, action) => {
     }
   }
 
-  if (action.type === FILTER_PRODUCTS) {
-    const { allProducts } = state
-    let tempProducts = [...allProducts]
-    const { price, text, company, category, color, shipping } = state.filters
-
-    if (text) {
-      tempProducts = tempProducts.filter((product) => {
-        return product.name.toLowerCase().startsWith(text)
-      })
-    }
-
-    if (category !== 'all') {
-      tempProducts = tempProducts.filter((product) => {
-        return product.category === category
-      })
-    }
-
-    if (company !== 'all') {
-      tempProducts = tempProducts.filter((product) => {
-        return product.company === company
-      })
-    }
-
-    if (color !== 'all') {
-      tempProducts = tempProducts.filter((product) => {
-        return product.colors.find((c) => c === color)
-      })
-    }
-
-    if (shipping) {
-      tempProducts = tempProducts.filter((product) => {
-        return product.shipping === true
-      })
-    }
-
-    if (price) {
-      tempProducts = tempProducts.filter((product) => {
-        return product.price <= price
-      })
-    }
-    return { ...state, filteredProducts: tempProducts }
-  }
-
   if (action.type === CLEAR_FILTERS) {
     return {
       ...state,
@@ -129,6 +91,28 @@ const filter_reducer = (state, action) => {
     }
   }
 
+  if (action.type === GET_CATEGORIES_SUCCESS) {
+    const distinctCategories = ['all', action.payload].flat()
+    return { ...state, categories: distinctCategories }
+  }
+  if (action.type === GET_CATEGORIES_ERROR) {
+    return { ...state }
+  }
+
+  if (action.type === GET_COLORS_SUCCESS) {
+    const distinctColors = ['all', action.payload].flat()
+    return { ...state, colors: distinctColors }
+  }
+  if (action.type === GET_COLORS_ERROR) {
+    return { ...state }
+  }
+  if (action.type === GET_COMPANIES_SUCCESS) {
+    const distinctColors = ['all', action.payload].flat()
+    return { ...state, companies: distinctColors }
+  }
+  if (action.type === GET_COMPANIES_ERROR) {
+    return { ...state }
+  }
   throw new Error(`No matching ${action.type} - action type`)
 }
 

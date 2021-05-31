@@ -16,6 +16,10 @@ import AllShops from './AllShopsPage'
 import Shop from './ShopPage'
 import PrivateRoute from './PrivateRoute'
 import NewProduct from './NewProductPage'
+import EditProduct from './EditProductPage'
+import Profile from './ProfilePage'
+import EditProfile from './EditProfilePage'
+import StripeConnect from './StripeConnectPage'
 
 export {
   About,
@@ -36,4 +40,8 @@ export {
   AllShops,
   Shop,
   NewProduct,
+  EditProduct,
+  Profile,
+  EditProfile,
+  StripeConnect,
 }

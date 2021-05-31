@@ -1,33 +1,35 @@
 import React from 'react'
 import { FaShoppingCart, FaUserPlus, FaUserMinus } from 'react-icons/fa'
+
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import { useCartContext } from './../context/cart-context'
 import { useUserContext } from './../context/user-context'
 
 const CartButtons = () => {
-  const { user, logout } = useUserContext()
-  console.log(user)
+  const { isAuthenticated, authorizedId, logout, seller } = useUserContext()
+
   const { totalItems } = useCartContext()
+
   return (
     <Wrapper className='cart-btn-wrapper'>
-      {user ? (
-        <Link to='/seller/shops' className='seller-btn'>
-          My Shops
-        </Link>
+      {isAuthenticated ? (
+        <>
+          {seller && (
+            <Link to='/seller/shops' className='seller-btn'>
+              My Shops
+            </Link>
+          )}
+          <Link to={`/user/${authorizedId}`} className='seller-btn'>
+            Profile
+          </Link>
+        </>
       ) : (
         <Link to='/shops/create' className='seller-btn'>
-          Become a seller
+          Sell
         </Link>
       )}
-      <Link to='/cart' className='cart-btn'>
-        Cart
-        <span className='cart-container'>
-          <FaShoppingCart />
-          <span className='cart-amount'>{totalItems}</span>
-        </span>
-      </Link>
-      {user ? (
+      {isAuthenticated ? (
         <Link to='/' className='auth-btn' onClick={logout}>
           logout <FaUserMinus />
         </Link>
@@ -36,20 +38,28 @@ const CartButtons = () => {
           login <FaUserPlus />
         </Link>
       )}
+      <Link to='/cart' className='cart-btn'>
+        Cart
+        <span className='cart-container'>
+          <FaShoppingCart />
+
+          <span className='cart-amount'>{totalItems}</span>
+        </span>
+      </Link>
     </Wrapper>
   )
 }
 
 const Wrapper = styled.div`
   display: grid;
-  grid-template-columns: auto 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   place-items: center;
-  width: 300px;
+  width: 400px;
 
   .cart-btn {
     color: var(--clr-grey-1);
-    /* letter-spacing: var(--spacing); */
-    font-size: 1.2rem;
+    letter-spacing: var(--spacing);
+    font-size: 1rem;
     display: flex;
     align-items: center;
   }

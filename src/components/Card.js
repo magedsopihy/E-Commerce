@@ -47,6 +47,7 @@ const Wrapper = styled.section`
   place-items: center;
   box-shadow: var(--dark-shadow);
   border-radius: var(--raduis);
+  margin-bottom: 4rem;
   h3 {
   }
   img {
