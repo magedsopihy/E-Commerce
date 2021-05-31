@@ -27,7 +27,7 @@ const Card = ({ id }) => {
         })
       }
     })
-  }, [id])
+  }, [])
 
   const logoUrl = values.image ? values.image : logo
   return (

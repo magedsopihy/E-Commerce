@@ -16,7 +16,7 @@ const EditProducts = ({ shopId }) => {
         setProducts(data)
       }
     })
-  }, [shopId])
+  }, [])
 
   return (
     <Wrapper>

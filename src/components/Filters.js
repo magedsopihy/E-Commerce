@@ -17,7 +17,7 @@ const Filters = () => {
     },
     clearFilters,
     updateFilters,
-    allProducts,
+
     colors,
     categories,
     companies,
