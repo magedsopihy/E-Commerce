@@ -35,7 +35,7 @@ const EditProfilePage = () => {
     return () => source.cancel()
   }, [userId])
 
-  const onSubmit = (data) => editUserProfile(data)
+  const onSubmit = (data) => editUserProfile(userId, data)
 
   if (redirectAfterEditUserProfile) {
     return <Redirect to={`/user/${userId}`} />

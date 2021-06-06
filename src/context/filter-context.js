@@ -100,7 +100,6 @@ export const FilterProvider = ({ children }) => {
 
       dispatch({ type: GET_CATEGORIES_SUCCESS, payload: res.data })
     } catch (err) {
-      console.log(err)
       dispatch({ type: GET_CATEGORIES_ERROR, payload: err.res.data })
     }
   }

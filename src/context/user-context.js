@@ -85,7 +85,7 @@ export const UserProvider = ({ children }) => {
     }
   }
 
-  const editUserProfile = async (user, userId) => {
+  const editUserProfile = async (userId, user) => {
     try {
       let response = await authAxios.put(`/users/${userId}`, user)
       console.log(response)

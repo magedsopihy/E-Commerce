@@ -99,7 +99,7 @@ const RegisterPage = () => {
             </div>
 
             <button type='submit' className='btn'>
-              Login
+              Register
             </button>
           </div>
           <Link className='login-link' to='/login'>
