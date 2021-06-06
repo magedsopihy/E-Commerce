@@ -74,9 +74,11 @@ export const UserProvider = ({ children }) => {
     dispatch({ type: LOGOUT })
   }
 
-  const readUserProfile = async (id) => {
+  const readUserProfile = async (id, token) => {
     try {
-      const response = await authAxios.get(`/users/${id}`)
+      const response = await authAxios.get(`/users/${id}`, {
+        cancelToken: token,
+      })
       return response.data
     } catch (err) {
       return err.response.data
@@ -89,7 +91,7 @@ export const UserProvider = ({ children }) => {
       console.log(response)
       dispatch({ type: PROFILE_EDIT_SUCCESS, payload: response.data })
     } catch (err) {
-      console.log(err.response.data)
+      console.log(err)
       dispatch({ type: PROFILE_EDIT_ERROR, payload: err.response.data })
     }
   }

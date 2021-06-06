@@ -1,37 +1,29 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { Redirect } from 'react-router-dom'
-
-import logo from './../assets/no_logo.png'
+import { useForm } from 'react-hook-form'
+import { BiError } from 'react-icons/bi'
 import { FiCamera } from 'react-icons/fi'
+import logo from './../assets/no_logo.png'
 import { useShopContext } from './../context/shop-context'
 
 const CreateShopPage = () => {
-  const { createShop, error } = useShopContext()
+  const { createShop } = useShopContext()
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm()
 
   const [values, setValues] = useState({
-    images: null,
-    name: '',
-    description: '',
     redirect: false,
     error: '',
   })
 
-  const handleChange = (name) => (event) => {
-    if (name === 'image') {
-      if (event.target.files && event.target.files[0]) {
-        setValues({
-          ...values,
-          [name]: event.target.files[0],
-        })
-      }
-    } else {
-      setValues({ ...values, [name]: event.target.value })
-    }
-  }
-
-  const create = async () => {
-    const response = await createShop(values)
+  const selectedImage = watch('image')
+  const onSubmit = async (data) => {
+    const response = await createShop({ ...data, image: data.image[0] })
     if (response.error) {
       setValues({ ...values, error: response.error })
     } else {
@@ -47,47 +39,85 @@ const CreateShopPage = () => {
     <Wrapper className='page-100'>
       <h3>create your shop now</h3>
       {values.error && <span className='error'>{values.error}</span>}
-      <form onSubmit={(e) => e.preventDefault()} enctype='multipart/form-data'>
-        {error && <span className='error'>{error}</span>}
+
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className='form-control'>
-          <label for='file-upload'>
+          <label htmlFor='file-upload'>
             <div className='img-contianer'>
               <input
                 type='file'
                 id='file-upload'
                 name='image'
-                onChange={handleChange('image')}
+                {...register('image', {
+                  required: 'Shop image required',
+                  validate: (value) => {
+                    return (
+                      /\.(gif|jpe?g|png)$/i.test(value[0].name) ||
+                      'The should be jpg, jpeg or png file'
+                    )
+                  },
+                })}
               />
               <img
-                src={`${
-                  values.image ? URL.createObjectURL(values.image) : logo
-                }`}
+                src={
+                  selectedImage === undefined || selectedImage.length === 0
+                    ? logo
+                    : URL.createObjectURL(selectedImage[0])
+                }
                 alt='logo place holder'
               />
               <FiCamera />
             </div>
+            {errors.image && (
+              <p className='error'>
+                <span>
+                  <BiError />
+                </span>
+                {errors.image.message}
+              </p>
+            )}
           </label>
-          <input
-            type='text'
-            name='name'
-            placeholder='shop name'
-            value={values.name}
-            className='input'
-            required
-            onChange={handleChange('name')}
-          />
-          <textarea
-            type='text'
-            name='description'
-            placeholder='shop description'
-            value={values.description}
-            className='input'
-            required
-            onChange={handleChange('description')}
-          />
-          <button type='submit' className='btn' onClick={create}>
-            create
-          </button>
+          <div className='input-element'>
+            <input
+              type='text'
+              className={errors.name ? 'input red-border' : 'input'}
+              placeholder='Shop Name'
+              {...register('name', {
+                required: 'Please enter your shop name',
+                minLength: { value: 3, message: 'Too short' },
+                maxLength: { value: 80, message: 'Too long' },
+              })}
+            />
+            {errors.name && (
+              <p className='error'>
+                <span>
+                  <BiError />
+                </span>
+                {errors.name.message}
+              </p>
+            )}
+          </div>
+          <div className='desc-element'>
+            <textarea
+              type='text'
+              className={errors.description ? 'input red-border' : 'input'}
+              placeholder='Shop description'
+              {...register('description', {
+                required: 'Please enter your shop description',
+                minLength: { value: 40, message: 'Too short' },
+                maxLength: { value: 150, message: 'Too long' },
+              })}
+            />
+            {errors.description && (
+              <p className='error'>
+                <span>
+                  <BiError />
+                </span>
+                {errors.description.message}
+              </p>
+            )}
+          </div>
+          <input type='submit' className='btn' />
         </div>
       </form>
     </Wrapper>
@@ -108,12 +138,8 @@ const Wrapper = styled.main`
     min-width: 350px;
     margin: 0.5rem 0;
   }
-  .input {
-    padding: 0.5rem;
-    margin-bottom: 0.5rem;
-    border: 1px solid var(--clr-primary-7);
-    border-radius: var(--radius);
-    outline-width: 0;
+  label {
+    margin-bottom: 1rem;
   }
   input[type='file'] {
     display: none;
@@ -122,7 +148,7 @@ const Wrapper = styled.main`
     width: 132px;
     height: 132px;
     border-radius: 50%;
-    margin: 0 auto 1rem auto;
+    margin: 0 auto;
     position: relative;
     display: grid;
     place-items: center;
@@ -146,15 +172,40 @@ const Wrapper = styled.main`
   .img-contianer:hover svg {
     display: block;
   }
-  .error {
-    display: block;
-    background: var(--clr-red-light);
+  .input-element {
+    margin-bottom: 2rem;
+    height: 2rem;
+  }
+  .desc-element {
+    margin-bottom: 2rem;
+    height: 3rem;
+  }
+  .input {
     padding: 0.5rem;
-    color: #fff;
+
+    border: 1px solid var(--clr-primary-7);
     border-radius: var(--radius);
     outline-width: 0;
-    font-size: 1rem;
+    width: 100%;
+  }
+  .red-border {
+    border: 1px solid var(--clr-red-light);
+  }
+  .error {
+    display: block;
+    display: flex;
+    align-items: center;
+    color: var(--clr-red-light);
+    outline-width: 0;
+    font-size: 0.8rem;
     letter-spacing: var(--spacing);
+    margin-top: 0;
+    span {
+      margin-right: 1rem;
+    }
+  }
+  p {
+    margin-bottom: 0;
   }
 `
 export default CreateShopPage

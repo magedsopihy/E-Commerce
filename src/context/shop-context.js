@@ -45,12 +45,15 @@ export const ShopProvider = ({ children }) => {
     }
   }
 
-  const listShopsByOwner = async () => {
+  const listShopsByOwner = async (token) => {
     try {
-      const response = await authAxios.get(`/shops/by/${authorizedId}`)
+      const response = await authAxios.get(`/shops/by/${authorizedId}`, {
+        cancelToken: token,
+      })
+      console.log(response)
       dispatch({ type: LIST_SHOPS_BY_OWNER_SUCCESS, payload: response.data })
     } catch (err) {
-      dispatch({ type: LIST_SHOPS_BY_OWNER_ERROR, payload: err.response.data })
+      // dispatch({ type: LIST_SHOPS_BY_OWNER_ERROR, payload: err.response.data })
     }
   }
 
@@ -64,16 +67,18 @@ export const ShopProvider = ({ children }) => {
     }
   }
 
-  const readShop = async (id) => {
+  const readShop = async (id, token) => {
     try {
-      const response = await authAxios.get(`/shop/${id}`)
+      const response = await authAxios.get(`/shop/${id}`, {
+        cancelToken: token,
+      })
       return response.data
     } catch (err) {
       return err.response.data
     }
   }
 
-  const updateShop = async ({ id, name, description, image }) => {
+  const updateShop = async (id, name, description, image) => {
     let shopData = new FormData()
     name && shopData.append('name', name)
     description && shopData.append('description', description)
@@ -93,10 +98,13 @@ export const ShopProvider = ({ children }) => {
     }
   }
 
-  const listAllShops = async () => {
+  const listAllShops = async (token) => {
     try {
       const response = await axios.get(
-        process.env.REACT_APP_API_URL + '/api/shops'
+        process.env.REACT_APP_API_URL + '/api/shops',
+        {
+          cancelToken: token,
+        }
       )
       return response.data
     } catch (err) {

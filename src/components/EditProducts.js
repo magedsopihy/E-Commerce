@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
+import axios from 'axios'
 import { Link } from 'react-router-dom'
 import { GoDiffAdded } from 'react-icons/go'
 import { MdModeEdit } from 'react-icons/md'
@@ -9,14 +10,18 @@ import { useProductsContext } from './../context/products-context'
 const EditProducts = ({ shopId }) => {
   const { fechProductsByShop } = useProductsContext()
   const [products, setProducts] = useState([])
+
   useEffect(() => {
-    fechProductsByShop(shopId).then((data) => {
+    const source = axios.CancelToken.source()
+    fechProductsByShop(shopId, source.token).then((data) => {
       if (data.error) {
       } else {
+        console.log(data)
         setProducts(data)
       }
     })
-  }, [fechProductsByShop, shopId])
+    return () => source.cancel()
+  }, [shopId])
 
   return (
     <Wrapper>
@@ -35,8 +40,8 @@ const EditProducts = ({ shopId }) => {
               <>
                 <article className='shop' key={i}>
                   <img
-                    src={product.images[0].url}
-                    alt={product.images[0].name}
+                    src={product.images.length > 0 && product.images[0].url}
+                    alt={product.images.length > 0 && product.images[0].name}
                   />
                   <div className='shop-info'>
                     <h4>{product.name}</h4>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { useParams } from 'react-router-dom'
+import axios from 'axios'
 import { Card, ProductsList } from './../components'
 import { useProductsContext } from './../context/products-context'
 
@@ -10,13 +11,15 @@ const ShopPage = () => {
   const [products, setProducts] = useState([])
 
   useEffect(() => {
-    fechProductsByShop(shopId).then((data) => {
+    const source = axios.CancelToken.source()
+    fechProductsByShop(shopId, source.token).then((data) => {
       if (data.error) {
       } else {
         setProducts(data)
       }
     })
-  }, [shopId, fechProductsByShop])
+    return () => source.cancel()
+  }, [shopId])
 
   console.log(products)
   return (

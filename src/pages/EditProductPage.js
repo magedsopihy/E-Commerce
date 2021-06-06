@@ -6,6 +6,7 @@ import { FiCamera } from 'react-icons/fi'
 import { PerviewImages } from '../components'
 import { useProductsContext } from '../context/products-context'
 import { colourNameToHex } from './../utils/helpers'
+import axios from 'axios'
 
 const EditProductPage = () => {
   const { fetchProduct, updateProduct } = useProductsContext()
@@ -27,7 +28,9 @@ const EditProductPage = () => {
   })
 
   useEffect(() => {
-    fetchProduct(productId).then((product) => {
+    const source = axios.CancelToken.source()
+
+    fetchProduct(productId, source.token).then((product) => {
       if (product.error) {
         setValues({ ...values, error: product.error })
       } else {
@@ -46,7 +49,8 @@ const EditProductPage = () => {
         })
       }
     })
-  }, [productId, fetchProduct, values])
+    return () => source.cancel()
+  }, [productId])
 
   const handleChange = (name) => (event) => {
     if (name === 'image') {

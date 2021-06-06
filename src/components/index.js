@@ -25,6 +25,7 @@ import EditShop from './EditShop'
 import Card from './Card'
 import EditProducts from './EditProducts'
 import PerviewImages from './PerviewImages'
+import CreateEditImages from './CreateEditImages.js'
 
 export {
   Footer,
@@ -54,4 +55,5 @@ export {
   Card,
   EditProducts,
   PerviewImages,
+  CreateEditImages,
 }

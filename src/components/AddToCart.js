@@ -5,13 +5,13 @@ import { FaCheck } from 'react-icons/fa'
 import AmountButtons from './AmountButtons'
 import { useCartContext } from './../context/cart-context'
 const AddToCart = ({ product }) => {
-  const { id, colors, stock } = product
+  const { id, colors, quantity } = product
   const { addToCart } = useCartContext()
   const [mainColor, setMainColor] = useState(colors[0].color)
   const [amount, setAmount] = useState(1)
 
   const increase = () => {
-    if (amount < stock) {
+    if (amount < quantity) {
       setAmount(amount + 1)
     } else {
       return amount

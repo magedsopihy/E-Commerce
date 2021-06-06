@@ -5,13 +5,16 @@ import { GoDiffAdded } from 'react-icons/go'
 import { MdModeEdit } from 'react-icons/md'
 import { useShopContext } from './../context/shop-context'
 import { DeleteShop } from './../components'
+import axios from 'axios'
 
 const MyShopsPage = () => {
   const { listShopsByOwner, myShops } = useShopContext()
 
   useEffect(() => {
-    listShopsByOwner()
-  }, [listShopsByOwner])
+    const source = axios.CancelToken.source()
+    listShopsByOwner(source.token)
+    return () => source.cancel()
+  }, [])
 
   return (
     <Wrapper className='page-100'>

@@ -1,45 +1,47 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-
+import { useForm } from 'react-hook-form'
+import { BiError } from 'react-icons/bi'
 import { Redirect } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
-import { FiCamera } from 'react-icons/fi'
-import { PerviewImages } from './../components'
+import { CreateEditImages } from './../components'
 import { useProductsContext } from './../context/products-context'
 import { colourNameToHex } from './../utils/helpers'
+import defaultImage from './../assets/default.jpg'
 
 const NewProduct = () => {
   const { addProduct } = useProductsContext()
-  const { shopId } = useParams()
-  const [values, setValues] = useState({
-    imagesToPerview: [],
-    images: [],
-    name: '',
-    description: '',
-    category: '',
-    quantity: '',
-    company: '',
-    price: 0,
-    redirect: false,
-    shipping: false,
-    error: '',
-    color: '',
-    colors: [],
+  const {
+    register,
+    handleSubmit,
+    watch,
+    getValue,
+    formState: { errors },
+  } = useForm({
+    mode: 'onBlur',
   })
 
-  const handleChange = (name) => (event) => {
-    if (name === 'image') {
-      if (event.target.files) {
-        const imagesArray = Array.from(event.target.files).map((file) =>
-          URL.createObjectURL(file)
-        )
-        setValues({
-          ...values,
-          imagesToPerview: imagesArray,
-          images: event.target.files,
-        })
-      }
-    } else if (name === 'color') {
+  const { shopId } = useParams()
+  const [values, setValues] = useState({
+    color: '',
+    colors: [],
+    colorError: '',
+    severError: '',
+    redirect: false,
+  })
+
+  if (values.redirect) {
+    return <Redirect to={`/seller/shop/edit/${shopId}`} />
+  }
+
+  let selectedImages = watch('images')
+  if (selectedImages !== undefined && selectedImages.length !== 0) {
+    selectedImages = Array.from(selectedImages).map((file) =>
+      URL.createObjectURL(file)
+    )
+  }
+  const handleColors = (name) => (event) => {
+    if (name === 'color') {
       setValues({
         ...values,
         color: event.target.value,
@@ -56,13 +58,8 @@ const NewProduct = () => {
           colors: [...values.colors, selectedColors],
         })
       }
-    } else if (name === 'shipping') {
-      setValues({ ...values, shipping: !values.shipping })
-    } else {
-      setValues({ ...values, [name]: event.target.value })
     }
   }
-
   const handleKeyPress = (event) => {
     if (
       values.colors.length > 0 &&
@@ -74,98 +71,190 @@ const NewProduct = () => {
     }
   }
 
-  const handleSubmit = async () => {
-    const response = await addProduct(shopId, values)
+  const onSubmit = async (data) => {
+    if (values.colors.length === 0 && values.color === '') {
+      return setValues({ ...values, colorError: 'Product colors is required' })
+    }
+
+    const response = await addProduct(shopId, { ...data, ...values })
     if (response.error) {
-      setValues({ ...values, error: response.error })
+      setValues({ ...values, severError: response.error })
     } else {
       setValues({ ...values, redirect: true })
     }
   }
 
-  if (values.redirect) {
-    return <Redirect to={`/seller/shop/edit/${shopId}`} />
-  }
-
   return (
-    <Wrapper className='page-100 section-center'>
-      {values.images.length > 0 ? (
-        <PerviewImages images={values.imagesToPerview} />
-      ) : (
-        <section className='perview'>
-          <h3>No Images slected yet</h3>
-        </section>
-      )}
-      <form onSubmit={(e) => e.preventDefault()}>
-        {values.error && <span className='error'>{values.error}</span>}
-        <div className='form-control'>
-          <input
-            type='text'
-            name='name'
-            placeholder='product name'
-            value={values.name}
-            className='input'
-            required
-            onChange={handleChange('name')}
-          />
-          <input
-            type='text'
-            name='description'
-            placeholder='description'
-            value={values.description}
-            className='input'
-            required
-            onChange={handleChange('description')}
-          />
-          <input
-            type='text'
-            name='category'
-            placeholder='category'
-            value={values.category}
-            className='input'
-            required
-            onChange={handleChange('category')}
-          />
-          <input
-            type='text'
-            name='quantity'
-            placeholder='quantity'
-            value={values.quantity}
-            className='input'
-            required
-            onChange={handleChange('quantity')}
-          />
-          <input
-            type='text'
-            name='price'
-            placeholder='price'
-            value={values.price}
-            className='input'
-            required
-            onChange={handleChange('price')}
-          />
-          <input
-            type='text'
-            name='company'
-            placeholder='company'
-            value={values.company}
-            className='input'
-            required
-            onChange={handleChange('company')}
-          />
-          <div className='shipping'>
-            <label htmlFor='shipping'>free shiping</label>
+    <Wrapper>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <section>
+          <div className='input-element'>
+            <h5>title</h5>
             <input
-              type='checkbox'
-              name='shipping'
-              checked={values.shipping}
-              onChange={handleChange('shipping')}
+              type='text'
+              className={errors.name ? 'input red-border' : 'input'}
+              {...register('name', {
+                required: 'Please enter your shop name',
+                minLength: { value: 3, message: 'Too short' },
+                maxLength: { value: 80, message: 'Too long' },
+              })}
             />
+            {errors.name && (
+              <p className='error'>
+                <span>
+                  <BiError />
+                </span>
+                {errors.name.message}
+              </p>
+            )}
           </div>
-
-          <label for='favcolor'>
-            colors:
-            <div className='colors'>
+          <div className='desc-element'>
+            <h5>description</h5>
+            <textarea
+              type='text'
+              className={errors.description ? 'input red-border' : 'input'}
+              {...register('description', {
+                required: 'Please a description for your product',
+                minLength: { value: 10, message: 'Too short' },
+                maxLength: { value: 80, message: 'Too long' },
+              })}
+            />
+            {errors.description && (
+              <p className='error'>
+                <span>
+                  <BiError />
+                </span>
+                {errors.description.message}
+              </p>
+            )}
+          </div>
+        </section>
+        <section>
+          <div className='images'>
+            <h5>images</h5>
+            <label for='file-upload'>
+              <input
+                type='file'
+                id='file-upload'
+                name='images'
+                multiple
+                {...register('images', {
+                  required: 'Product images required',
+                  validate: (value) => {
+                    return (
+                      /\.(gif|jpe?g|png)$/i.test(value[0].name) ||
+                      'The should be jpg, jpeg or png file'
+                    )
+                  },
+                })}
+              />
+              upload images
+            </label>
+          </div>
+          <div
+            className={
+              selectedImages === undefined || selectedImages.length === 0
+                ? 'images-perveiw add-bg'
+                : 'images-perveiw'
+            }
+          >
+            {selectedImages === undefined ? (
+              ''
+            ) : selectedImages.length === 0 ? (
+              ''
+            ) : (
+              <CreateEditImages images={selectedImages} />
+            )}
+          </div>
+        </section>
+        <section>
+          <div className='input-element'>
+            <h5>category</h5>
+            <input
+              type='text'
+              className={errors.category ? 'input red-border' : 'input'}
+              {...register('category', {
+                required: 'Product category is required',
+                minLength: { value: 3, message: 'Too short' },
+                maxLength: { value: 80, message: 'Too long' },
+              })}
+            />
+            {errors.category && (
+              <p className='error'>
+                <span>
+                  <BiError />
+                </span>
+                {errors.category.message}
+              </p>
+            )}
+          </div>
+          <div className='input-element'>
+            <h5>company</h5>
+            <input
+              type='text'
+              className={errors.price ? 'input red-border' : 'input'}
+              {...register('company', {
+                required: 'Product company is required',
+                minLength: { value: 3, message: 'Too short' },
+                maxLength: { value: 80, message: 'Too long' },
+              })}
+            />
+            {errors.company && (
+              <p className='error'>
+                <span>
+                  <BiError />
+                </span>
+                {errors.company.message}
+              </p>
+            )}
+          </div>
+        </section>
+        <section>
+          <div className='input-element'>
+            <h5>price</h5>
+            <input
+              type='number'
+              className={errors.price ? 'input red-border' : 'input'}
+              {...register('price', {
+                required: 'Product price is required',
+                minLength: { value: 1, message: 'Too short' },
+                maxLength: { value: 12, message: 'Too long' },
+              })}
+            />
+            {errors.price && (
+              <p className='error'>
+                <span>
+                  <BiError />
+                </span>
+                {errors.price.message}
+              </p>
+            )}
+          </div>
+          <div className='input-element'>
+            <h5>quantity</h5>
+            <input
+              type='number'
+              className={errors.quantity ? 'input red-border' : 'input'}
+              {...register('quantity', {
+                required: 'How many product items do you have',
+                minLength: { value: 1, message: 'Too short' },
+                maxLength: { value: 12, message: 'Too long' },
+              })}
+            />
+            {errors.quantity && (
+              <p className='error'>
+                <span>
+                  <BiError />
+                </span>
+                {errors.quantity.message}
+              </p>
+            )}
+          </div>
+        </section>
+        <section>
+          <h5>colors</h5>
+          <div className=' colors'>
+            <div>
               {values.colors.length > 0 &&
                 values.colors.map((color, i) => {
                   return (
@@ -181,126 +270,138 @@ const NewProduct = () => {
                         display: 'inline-block',
                         paddingLeft: 1,
                         paddingRight: 1,
-                        marginLeft: 2,
+                        marginLeft: 5,
                       }}
                     >
                       {color.name}
                     </span>
                   )
                 })}
-              <input
-                id='favcolor'
-                type='text'
-                name='color'
-                placeholder='name of color'
-                className='input'
-                value={values.color}
-                onChange={handleChange('color')}
-                onKeyDown={handleKeyPress}
-              />
             </div>
-          </label>
-          <label for='file-upload' className='images-btn btn'>
             <input
-              type='file'
-              id='file-upload'
-              name='image'
-              multiple
-              onChange={handleChange('image')}
+              id='favcolor'
+              type='text'
+              name='color'
+              value={values.color}
+              onChange={handleColors('color')}
+              onKeyDown={handleKeyPress}
             />
-            <FiCamera /> add product images
+          </div>
+        </section>
+        <section>
+          <h5>free shiping</h5>
+          <label htmlFor='shipping'>
+            <input type='checkbox' name='shipping' {...register('shipping')} />
+            this product shipping free of charge
           </label>
-          <button type='submit' className='btn' onClick={handleSubmit}>
-            add product
-          </button>
-        </div>
+        </section>
+        <button type='submit' className='btn'>
+          add product
+        </button>
       </form>
     </Wrapper>
   )
 }
 
 const Wrapper = styled.main`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  column-gap: 4rem;
-  .perview {
-    display: grid;
-    place-items: center;
-  }
-  .shipping {
-    display: grid;
-    text-align: 'center';
-    align-items: center;
-    grid-template-columns: auto 1fr;
+  display: flex;
+  flex-direction: column;
+  margin: 5rem auto;
+  max-width: 800px;
 
+  .input-element {
+    height: 4rem;
     margin-bottom: 2rem;
-    gap: 1rem;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 0;
+    text-transform: capitalize;
+  }
+  h5 {
+    margin-bottom: 0.5rem;
   }
   .colors {
-    display: inline-block;
-    text-align: 'center';
-  }
-  #favcolor {
-    border: transparent;
-  }
-  .form-control {
-    display: flex;
-    flex-direction: column;
-    min-width: 350px;
-    margin: 0.5rem 0;
-  }
-  .input {
-    padding: 0.5rem;
-    margin-bottom: 2rem;
-    border: 1px solid var(--clr-primary-7);
-    border-radius: var(--radius);
-    outline-width: 0;
-  }
-  input[type='file'] {
-    display: none;
-  }
-  .img-contianer {
-    width: 132px;
-    height: 132px;
-    border-radius: 50%;
-    margin: 0 auto 1rem auto;
-    position: relative;
     display: grid;
-    place-items: center;
+    grid-template-columns: auto 1fr;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
   }
-  .img-contianer img {
-    object-fit: cover;
-    border-radius: 50%;
+
+  input {
     width: 100%;
-    min-width: 100%;
-    min-height: 100%;
-    border: 4px solid #fff;
-    overflow: hidden;
+    padding: 0.5rem;
+    outline-width: 0;
+    border-radius: var(--radius);
+    border: 1px solid var(--clr-primary-9);
   }
-  .img-contianer svg {
-    position: absolute;
-    font-size: 50px;
-    color: rgba(0, 0, 0, 0.6);
+
+  #file-upload {
     display: none;
+  }
+
+  textarea {
+    width: 100%;
+    height: 6rem;
+    padding: 0.5rem;
+    outline-width: 0;
+    border-radius: var(--radius);
+    resize: none;
+    border: 1px solid var(--clr-primary-9);
+  }
+  .desc-element {
+    height: 9.5rem;
+  }
+
+  section {
+    background: var(--clr-primary-10);
+    padding: 1rem;
+    margin-bottom: 2rem;
+    border-radius: var(--raduis);
+    box-shadow: var(--light-shadow);
+  }
+  .images {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+  }
+  .images label {
+    color: var(--clr-red-dark);
     cursor: pointer;
   }
-  .img-contianer:hover svg {
-    display: block;
+  .add-bg {
+    background-image: url(${defaultImage});
+    background-size: cover;
+    background-position: center;
+  }
+  .images-perveiw {
+    height: 330px;
+    margin-bottom: 2rem;
+  }
+
+  input[name='shipping'] {
+    width: 13px;
+    padding: 0;
+    margin-right: 0.5rem;
+  }
+  label {
+    margin-bottom: 0.5rem;
   }
   .error {
     display: block;
-    background: var(--clr-red-light);
-    padding: 0.5rem;
-    color: #fff;
-    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    color: var(--clr-red-light);
     outline-width: 0;
-    font-size: 1rem;
+    font-size: 0.8rem;
     letter-spacing: var(--spacing);
-  }
-
-  .images-btn {
-    text-align: center;
-    margin-bottom: 2rem;
+    margin-top: 0;
+    span {
+      margin-right: 1rem;
+    }
   }
 `
 export default NewProduct

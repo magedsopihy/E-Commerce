@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
+import axios from 'axios'
 import logo from './../assets/no_logo.png'
 import { useShopContext } from './../context/shop-context'
 
@@ -14,7 +15,8 @@ const Card = ({ id }) => {
   })
 
   useEffect(() => {
-    readShop(id).then((shop) => {
+    const source = axios.CancelToken.source()
+    readShop(id, source.token).then((shop) => {
       if (shop.error) {
         setValues({ ...values, error: shop.error })
       } else {
@@ -27,7 +29,8 @@ const Card = ({ id }) => {
         })
       }
     })
-  }, [id, readShop, values])
+    return () => source.cancel()
+  }, [id])
 
   const logoUrl = values.image ? values.image : logo
   return (

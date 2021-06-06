@@ -114,10 +114,11 @@ export const ProductsProvider = ({ children }) => {
     }
   }
 
-  const fechProductsByShop = async (id, name = '', value = '') => {
+  const fechProductsByShop = async (id, name = '', value = '', token) => {
     try {
       const response = await authAxios.get(`/products/by/${id}`, {
         params: { [name]: value },
+        cancelToken: token,
       })
       return response.data
     } catch (err) {
@@ -136,10 +137,13 @@ export const ProductsProvider = ({ children }) => {
     }
   }
 
-  const fetchProduct = async (id) => {
+  const fetchProduct = async (id, token) => {
     try {
       const product = await axios.get(
-        process.env.REACT_APP_API_URL + `/api/products/${id}`
+        process.env.REACT_APP_API_URL + `/api/products/${id}`,
+        {
+          cancelToken: token,
+        }
       )
       return product.data
     } catch (err) {
@@ -215,5 +219,9 @@ export const ProductsProvider = ({ children }) => {
 }
 
 export const useProductsContext = () => {
-  return useContext(ProductsContext)
+  const context = useContext(ProductsContext)
+  if (context === undefined) {
+    throw new Error('useProductsContext must be used within a ProductsProvider')
+  }
+  return context
 }

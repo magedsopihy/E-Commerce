@@ -1,59 +1,104 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
+import { BiError } from 'react-icons/bi'
 import { useUserContext } from '../context/user-context'
 
 const RegisterPage = () => {
   const { error, signup, openModal } = useUserContext()
-  const [values, setValues] = useState({
-    fName: '',
-    lName: '',
-    email: '',
-    password: '',
-  })
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm()
 
-  const handleChange = (name) => (event) => {
-    setValues({ ...values, [name]: event.target.value })
-  }
+  const onSubmit = (data) => signup(data)
   return (
     <>
       <Wrapper className='page-100'>
-        <form onSubmit={(e) => e.preventDefault()}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           {error && <span className='error'>{error}</span>}
           <div className='form-control'>
-            <input
-              type='text'
-              name='fName'
-              placeholder='first name'
-              value={values.fName}
-              onChange={handleChange('fName')}
-            />
-            <input
-              type='text'
-              name='lName'
-              placeholder='last name'
-              value={values.lName}
-              onChange={handleChange('lName')}
-            />
-            <input
-              type='email'
-              name='email'
-              placeholder='email'
-              value={values.email}
-              onChange={handleChange('email')}
-            />
-            <input
-              type='password'
-              name='password'
-              placeholder='password'
-              email={values.password}
-              onChange={handleChange('password')}
-            />
-            <button
-              type='submit'
-              className='btn'
-              onClick={() => signup(values)}
-            >
+            <div className='input-element'>
+              <input
+                type='text'
+                className={errors.fName ? 'red-border' : ''}
+                placeholder='First Name'
+                {...register('fName', {
+                  required: 'Please enter your first name',
+                  minLength: { value: 3, message: 'Too short' },
+                  maxLength: { value: 80, message: 'Too long' },
+                })}
+              />
+              {errors.fName && (
+                <p className='error'>
+                  <span>
+                    <BiError />
+                  </span>
+                  {errors.fName.message}
+                </p>
+              )}
+            </div>
+            <div className='input-element'>
+              <input
+                type='text'
+                className={errors.lName ? 'red-border' : ''}
+                placeholder='Last Name'
+                {...register('lName', {
+                  required: 'Please enter your last name',
+                  minLength: { value: 3, message: 'Too short' },
+                  maxLength: { value: 80, message: 'Too long' },
+                })}
+              />
+              {errors.lName && (
+                <p className='error'>
+                  <span>
+                    <BiError />
+                  </span>
+                  {errors.lName.message}
+                </p>
+              )}
+            </div>
+            <div className='input-element'>
+              <input
+                type='email'
+                className={errors.email ? 'red-border' : ''}
+                placeholder='Email'
+                {...register('email', {
+                  required: 'Please enter your email',
+                })}
+              />
+              {errors.email && (
+                <p className='error'>
+                  <span>
+                    <BiError />
+                  </span>
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
+            <div className='input-element'>
+              <input
+                type='password'
+                className={errors.password ? 'red-border' : ''}
+                placeholder='Password'
+                {...register('password', {
+                  required: 'Please enter Password ',
+                  minLength: { value: 8, message: 'Too short' },
+                })}
+              />
+              {errors.password && (
+                <p className='error'>
+                  <span>
+                    <BiError />
+                  </span>
+                  {errors.password.message}
+                </p>
+              )}
+            </div>
+
+            <button type='submit' className='btn'>
               Login
             </button>
           </div>
@@ -89,12 +134,19 @@ const Wrapper = styled.main`
     min-width: 350px;
     margin: 0.5rem 0;
   }
+  .input-element {
+    margin-bottom: 2rem;
+    height: 2rem;
+  }
   input {
     padding: 0.5rem;
-    margin-bottom: 0.5rem;
     border: 1px solid var(--clr-primary-7);
     border-radius: var(--radius);
     outline-width: 0;
+    width: 100%;
+  }
+  .red-border {
+    border: 1px solid var(--clr-red-light);
   }
   .login-link {
     font-size: 1rem;
@@ -106,13 +158,16 @@ const Wrapper = styled.main`
   }
   .error {
     display: block;
-    background: var(--clr-red-light);
-    padding: 0.5rem;
-    color: #fff;
-    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    color: var(--clr-red-light);
     outline-width: 0;
-    font-size: 1rem;
+    font-size: 0.8rem;
     letter-spacing: var(--spacing);
+    margin-top: 0;
+    span {
+      margin-right: 1rem;
+    }
   }
 `
 const ModalWrapper = styled.div`

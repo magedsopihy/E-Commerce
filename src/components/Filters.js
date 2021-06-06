@@ -21,7 +21,6 @@ const Filters = () => {
     categories,
     companies,
   } = useFilterContext()
-  console.log(colors)
 
   return (
     <Wrapper>

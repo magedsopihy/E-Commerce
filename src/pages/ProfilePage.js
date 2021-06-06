@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Link, useParams } from 'react-router-dom'
+import axios from 'axios'
 import { useUserContext } from './../context/user-context'
 import { DeleteShop } from './../components'
 import { MdModeEdit } from 'react-icons/md'
@@ -15,14 +16,16 @@ const ProfilePage = () => {
   const [setRedirectToSignin] = useState(false)
 
   useEffect(() => {
-    readUserProfile(userId).then((response) => {
+    const source = axios.CancelToken.source()
+    readUserProfile(userId, source.token).then((response) => {
       if (response.error) {
         setRedirectToSignin(true)
       } else {
         setUser(response)
       }
     })
-  }, [readUserProfile, setRedirectToSignin, userId])
+    return () => source.cancel()
+  }, [userId])
 
   return (
     <Wrapper className='page-100'>

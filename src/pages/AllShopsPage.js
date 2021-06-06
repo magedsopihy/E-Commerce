@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import { useShopContext } from './../context/shop-context'
-
+import axios from 'axios'
 const AllShopsPage = () => {
   const { listAllShops } = useShopContext()
   const [values, setValues] = useState({
@@ -11,14 +11,17 @@ const AllShopsPage = () => {
   })
 
   useEffect(() => {
-    listAllShops().then((response) => {
+    const source = axios.CancelToken.source()
+
+    listAllShops(source.token).then((response) => {
       if (response.error) {
         setValues({ ...values, error: response.error })
       } else {
         setValues({ ...values, shops: response })
       }
     })
-  }, [listAllShops, values])
+    return () => source.cancel()
+  }, [])
 
   return (
     <Wrapper className='page-100'>

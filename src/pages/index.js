@@ -1,5 +1,5 @@
 import About from './AboutPage'
-import AuthWrapper from './AuthWrapper'
+
 import Cart from './CartPage'
 import Chectout from './ChectoutPage'
 import Error from './ErrorPage'
@@ -23,7 +23,6 @@ import StripeConnect from './StripeConnectPage'
 
 export {
   About,
-  AuthWrapper,
   Cart,
   Chectout,
   Error,
