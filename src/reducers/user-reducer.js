@@ -78,6 +78,7 @@ const user_reducer = (state, action) => {
         return {
           ...state,
           error: '',
+          seller: action.payload.seller,
           isAuthenticated: true,
           redirectAfterEditUserProfile: true,
         }

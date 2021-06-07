@@ -46,7 +46,7 @@ export const UserProvider = ({ children }) => {
         process.env.REACT_APP_API_URL + '/auth/signin/',
         user
       )
-      console.log(response)
+
       dispatch({ type: LOGIN_SUCCESS, payload: response.data })
     } catch (err) {
       console.log(err)
@@ -88,7 +88,7 @@ export const UserProvider = ({ children }) => {
   const editUserProfile = async (userId, user) => {
     try {
       let response = await authAxios.put(`/users/${userId}`, user)
-      console.log(response)
+
       dispatch({ type: PROFILE_EDIT_SUCCESS, payload: response.data })
     } catch (err) {
       console.log(err)
