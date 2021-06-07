@@ -180,9 +180,11 @@ const Wrapper = styled.main`
     margin-bottom: 2rem;
     height: 3rem;
   }
+  textarea {
+    resize: none;
+  }
   .input {
     padding: 0.5rem;
-
     border: 1px solid var(--clr-primary-7);
     border-radius: var(--radius);
     outline-width: 0;

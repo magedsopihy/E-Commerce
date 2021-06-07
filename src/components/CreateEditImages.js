@@ -70,14 +70,15 @@ const Wrapper = styled.div`
   }
   .main img {
     border-radius: var(--radius);
-    width: 300px;
-    height: 300px;
+    width: 350px;
+
+    height: 350px;
     object-fit: cover;
   }
 
   .gallery {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     column-gap: 1rem;
     grid-template-rows: 100px;
     .gallery-item {

@@ -94,7 +94,7 @@ const NewProduct = () => {
               type='text'
               className={errors.name ? 'input red-border' : 'input'}
               {...register('name', {
-                required: 'Please enter your shop name',
+                required: 'Please enter your product name',
                 minLength: { value: 3, message: 'Too short' },
                 maxLength: { value: 80, message: 'Too long' },
               })}
@@ -116,7 +116,7 @@ const NewProduct = () => {
               {...register('description', {
                 required: 'Please a description for your product',
                 minLength: { value: 10, message: 'Too short' },
-                maxLength: { value: 80, message: 'Too long' },
+                maxLength: { value: 150, message: 'Too long' },
               })}
             />
             {errors.description && (
