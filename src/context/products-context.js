@@ -108,6 +108,7 @@ export const ProductsProvider = ({ children }) => {
         data: shopData,
         headers: { Authorization: `Bearer ${token}` },
       })
+
       return response.data
     } catch (err) {
       return err.response.data

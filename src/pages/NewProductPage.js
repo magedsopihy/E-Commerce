@@ -10,7 +10,7 @@ import { colourNameToHex } from './../utils/helpers'
 import defaultImage from './../assets/default.jpg'
 
 const NewProduct = () => {
-  const { addProduct } = useProductsContext()
+  const { addProduct, fetchProducts } = useProductsContext()
   const {
     register,
     handleSubmit,
@@ -81,6 +81,7 @@ const NewProduct = () => {
       setValues({ ...values, severError: response.error })
     } else {
       setValues({ ...values, redirect: true })
+      fetchProducts()
     }
   }
 
