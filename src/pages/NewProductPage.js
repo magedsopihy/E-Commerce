@@ -72,7 +72,7 @@ const NewProduct = () => {
   }
 
   const onSubmit = async (data) => {
-    setLoading(false)
+    setLoading(true)
     if (values.colors.length === 0 && values.color === '') {
       return setValues({ ...values, colorError: 'Product colors is required' })
     }
@@ -81,13 +81,13 @@ const NewProduct = () => {
     if (response.error) {
       setValues({ ...values, severError: response.error })
     } else {
-      setLoading(true)
+      setLoading(false)
       setValues({ ...values, redirect: true })
       fetchProducts()
     }
   }
 
-  if (!loading) {
+  if (loading) {
     return <Loading />
   }
 

@@ -25,17 +25,17 @@ const CreateShopPage = () => {
 
   const selectedImage = watch('image')
   const onSubmit = async (data) => {
-    setLoading(false)
+    setLoading(true)
     const response = await createShop({ ...data, image: data.image[0] })
     if (response.error) {
       setValues({ ...values, error: response.error })
     } else {
-      setLoading(true)
+      setLoading(false)
       setValues({ ...values, redirect: true })
     }
   }
 
-  if (!loading) {
+  if (loading) {
     return <Loading />
   }
 
