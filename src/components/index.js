@@ -26,6 +26,7 @@ import Card from './Card'
 import EditProducts from './EditProducts'
 import PerviewImages from './PerviewImages'
 import CreateEditImages from './CreateEditImages.js'
+import GridView from './GridView.js'
 
 export {
   Footer,
@@ -56,4 +57,5 @@ export {
   EditProducts,
   PerviewImages,
   CreateEditImages,
+  GridView,
 }

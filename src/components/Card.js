@@ -47,7 +47,7 @@ const Wrapper = styled.section`
   row-gap: 2rem;
   padding: 1rem 0.5rem;
   width: 300px;
-  height: 300px;
+  text-align: center;
   place-items: center;
   box-shadow: var(--dark-shadow);
   border-radius: var(--raduis);

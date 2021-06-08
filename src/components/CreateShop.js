@@ -5,10 +5,12 @@ import { useForm } from 'react-hook-form'
 import { BiError } from 'react-icons/bi'
 import { FiCamera } from 'react-icons/fi'
 import logo from './../assets/no_logo.png'
+import Loading from './Loading'
 import { useShopContext } from './../context/shop-context'
 
 const CreateShopPage = () => {
   const { createShop } = useShopContext()
+  const [loading, setLoading] = useState(false)
   const {
     register,
     handleSubmit,
@@ -23,12 +25,18 @@ const CreateShopPage = () => {
 
   const selectedImage = watch('image')
   const onSubmit = async (data) => {
+    setLoading(false)
     const response = await createShop({ ...data, image: data.image[0] })
     if (response.error) {
       setValues({ ...values, error: response.error })
     } else {
+      setLoading(true)
       setValues({ ...values, redirect: true })
     }
+  }
+
+  if (loading) {
+    return <Loading />
   }
 
   if (values.redirect) {

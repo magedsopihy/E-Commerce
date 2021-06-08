@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 import { BiError } from 'react-icons/bi'
 import { Redirect } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
-import { CreateEditImages } from './../components'
+import { CreateEditImages, Loading } from './../components'
 import { useProductsContext } from './../context/products-context'
 import { colourNameToHex } from './../utils/helpers'
 import defaultImage from './../assets/default.jpg'
@@ -20,7 +20,7 @@ const NewProduct = () => {
   } = useForm({
     mode: 'onBlur',
   })
-
+  const [loading, setLoading] = useState(false)
   const { shopId } = useParams()
   const [values, setValues] = useState({
     color: '',
@@ -72,6 +72,7 @@ const NewProduct = () => {
   }
 
   const onSubmit = async (data) => {
+    setLoading(false)
     if (values.colors.length === 0 && values.color === '') {
       return setValues({ ...values, colorError: 'Product colors is required' })
     }
@@ -80,9 +81,14 @@ const NewProduct = () => {
     if (response.error) {
       setValues({ ...values, severError: response.error })
     } else {
+      setLoading(true)
       setValues({ ...values, redirect: true })
       fetchProducts()
     }
+  }
+
+  if (loading) {
+    return <Loading />
   }
 
   return (
