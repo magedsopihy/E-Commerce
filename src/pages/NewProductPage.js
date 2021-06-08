@@ -221,6 +221,7 @@ const NewProduct = () => {
             <h5>price</h5>
             <input
               type='number'
+              min='0'
               className={errors.price ? 'input red-border' : 'input'}
               {...register('price', {
                 required: 'Product price is required',
@@ -241,6 +242,7 @@ const NewProduct = () => {
             <h5>quantity</h5>
             <input
               type='number'
+              min='1'
               className={errors.quantity ? 'input red-border' : 'input'}
               {...register('quantity', {
                 required: 'How many product items do you have',

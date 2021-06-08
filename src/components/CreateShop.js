@@ -35,14 +35,12 @@ const CreateShopPage = () => {
     }
   }
 
-  if (loading) {
-    return <Loading />
-  }
-
   if (values.redirect) {
     return <Redirect to='/seller/shops' />
   }
-
+  if (loading) {
+    return <Loading />
+  }
   return (
     <Wrapper className='page-100'>
       <h3>create your shop now</h3>
