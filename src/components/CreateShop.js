@@ -35,7 +35,7 @@ const CreateShopPage = () => {
     }
   }
 
-  if (loading) {
+  if (!loading) {
     return <Loading />
   }
 

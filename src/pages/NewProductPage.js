@@ -87,7 +87,7 @@ const NewProduct = () => {
     }
   }
 
-  if (loading) {
+  if (!loading) {
     return <Loading />
   }
 
